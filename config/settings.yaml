@@ -28,6 +28,22 @@ strategies:
     lookback_period: 30
     z_score_threshold: 2.0
     rebalance_frequency: "daily"
+  ma_crossover:
+    fast_period: 20
+    slow_period: 50
+    signal_period: 9
+    rebalance_frequency: "daily"
+  breakout:
+    lookback_period: 20
+    breakout_threshold: 0.02
+    atr_periods: 14
+    rebalance_frequency: "daily"
+  combined:
+    aggregation_method: "majority" # "majority", "unanimous", or "weighted"
+    strategy_weights:
+      momentum: 0.5
+      mean_reversion: 0.5
+    rebalance_frequency: "daily"
 
 # Risk management settings
 risk:
@@ -35,6 +51,9 @@ risk:
   max_portfolio_risk: 0.02 # Maximum portfolio risk (2% daily VaR)
   stop_loss_percentage: 0.05 # 5% stop loss
   take_profit_percentage: 0.10 # 10% take profit
+  max_trades_per_day: 5 # Maximum number of trades per day
+  max_open_positions: 10 # Maximum number of open positions
+  correlation_threshold: 0.7 # Threshold for correlation-based position sizing
 
 # Backtesting settings
 backtest:
@@ -43,6 +62,16 @@ backtest:
   end_date: "2022-12-31"
   include_commission: true
   commission_rate: 0.0005 # 5 basis points
+  include_slippage: true
+  slippage_model: "fixed" # "fixed" or "percentage"
+  slippage_value: 0.0001 # 1 basis point
+
+# Execution settings
+execution:
+  order_type: "market" # "market", "limit", "stop", "stop_limit"
+  time_in_force: "day" # "day", "gtc", "ioc", "fok"
+  default_limit_offset: 0.0005 # 5 basis points (for limit orders)
+  default_stop_offset: 0.0010 # 10 basis points (for stop orders)
 
 # Logging configuration
 logging:
@@ -59,8 +88,26 @@ reporting:
     - "sharpe_ratio"
     - "max_drawdown"
     - "win_rate"
+    - "profit_factor"
+    - "volatility"
+    - "average_win"
+    - "average_loss"
+    - "max_consecutive_wins"
+    - "max_consecutive_losses"
   output_directory: "reports"
   plots:
     - "equity_curve"
     - "drawdown"
     - "monthly_returns"
+    - "trade_distribution"
+    - "profit_loss_histogram"
+  generate_html: true
+  generate_csv: true
+  generate_pdf: false
+
+# Data storage settings
+data:
+  cache_directory: "data/cache"
+  raw_directory: "data/raw"
+  processed_directory: "data/processed"
+  max_cache_age: 604800 # 1 week in seconds
